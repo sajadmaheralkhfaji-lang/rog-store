@@ -1,120 +1,13 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROG Store - متجر قطع الحاسوب</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
-        
-        :root {
-            --bg-dark: #121212;
-            --bg-panel: #1e1e1e;
-            --text-main: #e0e0e0;
-            --primary-blue: #001f3f;
-            --accent-blue: #0074D9;
-        }
-
-        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg-dark); color: var(--text-main); }
-        .gradient-text { background: linear-gradient(90deg, #e0e0e0, var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .page-section { display: none; }
-        .page-section.active { display: block; }
-        
-        #chat-widget { display: none; }
-        #chat-widget.open { display: flex; }
-        .dot-flashing { animation: dot-flashing 1s infinite linear; }
-        @keyframes dot-flashing { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col">
-
-    <nav class="bg-[#1e1e1e] border-b border-gray-800 p-4 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="cursor-pointer" onclick="navigateTo('home')">
-                <span class="text-3xl font-black text-white">ROG</span>
-                <span class="text-3xl font-black text-blue-500">STORE</span>
-            </div>
-            <div class="hidden md:flex gap-6 font-bold">
-                <a href="#" onclick="navigateTo('home')">الرئيسية</a>
-                <a href="#" onclick="navigateTo('category', 'GPU')">كروت الشاشة</a>
-                <a href="#" onclick="navigateTo('settings')">الإعدادات</a>
-            </div>
-        </div>
-    </nav>
-
-    <main class="flex-grow">
-        <section id="page-home" class="page-section active p-8">
-            <h1 class="text-4xl font-black mb-8 text-center">أهلاً بك في متجر <span class="text-blue-500">ROG STORE</span></h1>
-            <p class="text-center text-gray-400 mb-12">وجهتك الأولى لبيع قطع الحاسوب والإلكترونيات بأفضل الأسعار.</p>
-            <div id="home-products-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto"></div>
-        </section>
-
-        <section id="page-list" class="page-section p-8">
-            <h1 id="list-title" class="text-3xl font-bold mb-8">المنتجات</h1>
-            <div id="list-products-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto"></div>
-        </section>
-
-        <section id="page-settings" class="page-section p-8 max-w-2xl mx-auto">
-            <h1 class="text-3xl font-bold mb-6">الإعدادات</h1>
-            <div class="bg-[#1e1e1e] p-6 rounded-xl">
-                <h2 class="text-xl mb-4">إضافة منتج جديد</h2>
-                <form onsubmit="addNewProduct(event)" class="space-y-4">
-                    <input type="text" id="new-prod-name" placeholder="اسم المنتج" class="w-full bg-black p-2 rounded border border-gray-700">
-                    <input type="number" id="new-prod-price" placeholder="السعر (بالدينار العراقي)" class="w-full bg-black p-2 rounded border border-gray-700">
-                    <button type="submit" class="w-full bg-blue-600 p-2 rounded font-bold">إضافة المنتج</button>
-                </form>
-            </div>
-        </section>
-    </main>
-
-    <footer class="border-t border-gray-800 p-8 text-center text-gray-500">
-        <p>"رأس الحكمة مخافة الله"</p>
-    </footer>
-
-    <script>
-        let products = [
-            { id: 1, name: 'كرت شاشة ASUS RTX 4090', price: 2950000, category: 'GPU', brand: 'ASUS', stock: 'متوفر', desc: 'أقوى كرت شاشة للألعاب بدقة 4K' },
-            { id: 2, name: 'معالج Intel i9-14900K', price: 950000, category: 'CPU', brand: 'Intel', stock: 'نفذت الكمية', desc: 'معالج الجيل الرابع عشر الخارق' }
-        ];
-
-        function navigateTo(page, param) {
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            if (page === 'home') {
-                document.getElementById('page-home').classList.add('active');
-                renderProducts(products, 'home-products-container');
-            } else if (page === 'category') {
-                document.getElementById('page-list').classList.add('active');
-                renderProducts(products.filter(p => p.category === param), 'list-products-container');
-            } else {
-                document.getElementById('page-settings').classList.add('active');
-            }
-        }
-
-        function renderProducts(list, containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = list.map(p => `
-                <div class="bg-[#1e1e1e] p-4 rounded-xl border border-gray-700">
-                    <h3 class="text-xl font-bold">${p.name}</h3>
-                    <p class="text-gray-400 text-sm mt-2">${p.desc}</p>
-                    <div class="mt-4 flex justify-between items-center">
-                        <span class="text-blue-400 font-bold">${p.price.toLocaleString()} د.ع</span>
-                        <span class="text-xs ${p.stock === 'متوفر' ? 'text-green-500' : 'text-red-500'} font-bold">${p.stock}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function addNewProduct(e) {
-            e.preventDefault();
-            const name = document.getElementById('new-prod-name').value;
-            const price = parseInt(document.getElementById('new-prod-price').value);
-            products.push({ id: Date.now(), name, price, category: 'GPU', stock: 'متوفر', desc: 'منتج جديد' });
-            alert('تمت الإضافة بنجاح!');
-            navigateTo('home');
-        }
-
-        window.onload = () => navigateTo('home');
-    </script>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Google AI Studio App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
+
